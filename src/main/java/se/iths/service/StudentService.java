@@ -1,6 +1,7 @@
 package se.iths.service;
 
 import se.iths.entity.Student;
+import se.iths.exception.IdNotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,8 +21,13 @@ public class StudentService {
         entityManager.merge(student);
     }
 
-    public void patchStudent(Student studentUpdate) {
+    public void patchStudent(Student studentUpdate) throws IdNotFoundException {
         Student student = entityManager.find(Student.class, studentUpdate.getId());
+
+        if (student == null) {
+            throw new IdNotFoundException("Student with id " + studentUpdate.getId() + " not found.");
+        }
+
         if (notNull(studentUpdate.getFirstName())) {
             student.setFirstName(studentUpdate.getFirstName());
         }
@@ -41,14 +47,26 @@ public class StudentService {
         return entityManager.createQuery("SELECT s from Student s", Student.class).getResultList();
     }
 
-    public Student getStudentById(Long id) {
-        return entityManager.find(Student.class, id);
+    public Student getStudentById(Long id) throws IdNotFoundException {
+        Student student = entityManager.find(Student.class, id);
+        if (student == null) {
+            throw new IdNotFoundException("Student with id " + id + " not found.");
+        }
+        return student;
     }
 
-    public void deleteStudent(Long id) {
+    public void deleteStudent(Long id) throws IdNotFoundException {
         Student student = entityManager.find(Student.class, id);
+        if (student == null) {
+            throw new IdNotFoundException("Student with id " + id + " not found.");
+        }
         entityManager.remove(student);
     }
+
+    public List<Student> getStudentsByLastName(String lastName) {
+        return entityManager.createNamedQuery("student.getAllByLastName", Student.class).setParameter("lastName", lastName).getResultList();
+    }
+
 
     private <T> boolean notNull(T object) {
         return object != null;
