@@ -12,8 +12,8 @@ public class TransactionalExceptionMapper implements ExceptionMapper<Transaction
     public Response toResponse(TransactionalException e) {
         return Response
                 .status(Response.Status.BAD_REQUEST)
-                .entity("Constraint violation")
-                .type(MediaType.TEXT_PLAIN_TYPE)
+                .entity(ExceptionDTO.of(new Exception("Constraint violation")))
+                .type(MediaType.APPLICATION_JSON)
                 .build();
     }
 }

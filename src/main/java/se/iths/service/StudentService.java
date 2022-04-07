@@ -1,6 +1,7 @@
 package se.iths.service;
 
 import se.iths.entity.Student;
+import se.iths.entity.Subject;
 import se.iths.exception.IdNotFoundException;
 
 import javax.persistence.EntityManager;
@@ -60,11 +61,37 @@ public class StudentService {
         if (student == null) {
             throw new IdNotFoundException("Student with id " + id + " not found.");
         }
+
+        student.removeAllSubjects();
         entityManager.remove(student);
     }
 
     public List<Student> getStudentsByLastName(String lastName) {
         return entityManager.createNamedQuery("student.getAllByLastName", Student.class).setParameter("lastName", lastName).getResultList();
+    }
+
+    public void addSubject(Long studentId, Long subjectId) throws IdNotFoundException {
+        Student student = entityManager.find(Student.class, studentId);
+        Subject subject = entityManager.find(Subject.class, subjectId);
+        if (student == null) {
+            throw new IdNotFoundException("Student with id " + studentId + " not found.");
+        }
+        if (subject == null) {
+            throw new IdNotFoundException("Subject with id " + subjectId + " not found.");
+        }
+        student.addSubject(subject);
+    }
+
+    public void removeSubject(Long studentId, Long subjectId) throws IdNotFoundException {
+        Student student = entityManager.find(Student.class, studentId);
+        Subject subject = entityManager.find(Subject.class, subjectId);
+        if (student == null) {
+            throw new IdNotFoundException("Student with id " + studentId + " not found.");
+        }
+        if (subject == null) {
+            throw new IdNotFoundException("Subject with id " + subjectId + " not found.");
+        }
+        student.removeSubject(subject);
     }
 
 

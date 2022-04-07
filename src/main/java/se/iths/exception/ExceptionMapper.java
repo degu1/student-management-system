@@ -9,8 +9,8 @@ public class ExceptionMapper implements javax.ws.rs.ext.ExceptionMapper<Exceptio
     @Override
     public Response toResponse(Exception e) {
         return Response.serverError()
-                .type(MediaType.TEXT_PLAIN_TYPE)
-                .entity("Server error!!")
+                .type(MediaType.APPLICATION_JSON)
+                .entity(ExceptionDTO.of(e))
                 .build();
     }
 }

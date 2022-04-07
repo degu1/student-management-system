@@ -11,8 +11,8 @@ public class IdNotFoundMapper implements ExceptionMapper<IdNotFoundException> {
     public Response toResponse(IdNotFoundException e) {
         return Response
                 .status(Response.Status.BAD_REQUEST)
-                .entity(e.getMessage())
-                .type(MediaType.TEXT_PLAIN_TYPE)
+                .entity(ExceptionDTO.of(e))
+                .type(MediaType.APPLICATION_JSON)
                 .build();
     }
 }

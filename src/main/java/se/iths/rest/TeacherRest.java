@@ -1,10 +1,9 @@
 package se.iths.rest;
 
-import se.iths.entity.Student;
+import se.iths.entity.Teacher;
 import se.iths.exception.IdNotFoundException;
-import se.iths.service.StudentService;
+import se.iths.service.TeacherService;
 
-import javax.ejb.Remove;
 import javax.inject.Inject;
 import javax.transaction.TransactionalException;
 import javax.ws.rs.*;
@@ -12,19 +11,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("students")
+@Path("teachers")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class StudentRest {
+public class TeacherRest {
 
     @Inject
-    StudentService service;
+    TeacherService service;
 
     @POST()
-    public Response createStudent(Student student) throws TransactionalException {
+    public Response createTeacher(Teacher teacher) throws TransactionalException {
         try {
-            service.createStudent(student);
-            return Response.ok(student).build();
+            service.createTeacher(teacher);
+            return Response.ok(teacher).build();
         } catch (TransactionalException transactionalException) {
             throw transactionalException;
         } catch (Exception e) {
@@ -33,9 +32,9 @@ public class StudentRest {
     }
 
     @PUT
-    public Response updateStudent(Student student) {
+    public Response updateTeacher(Teacher teacher) {
         try {
-            service.updateStudent(student);
+            service.updateTeacher(teacher);
             return Response.ok().build();
         } catch (TransactionalException transactionalException) {
             throw transactionalException;
@@ -45,9 +44,9 @@ public class StudentRest {
     }
 
     @PATCH
-    public Response patchStudent(Student student) throws IdNotFoundException {
+    public Response patchTeacher(Teacher teacher) throws IdNotFoundException {
         try {
-            service.patchStudent(student);
+            service.patchTeacher(teacher);
             return Response.ok().build();
         } catch (TransactionalException transactionalException) {
             throw transactionalException;
@@ -59,10 +58,10 @@ public class StudentRest {
     }
 
     @GET()
-    public Response getAllStudents() {
+    public Response getAllTeachers() {
         try {
-            List<Student> students = service.getAllStudents();
-            return Response.ok(students).build();
+            List<Teacher> teachers = service.getAllTeacher();
+            return Response.ok(teachers).build();
         } catch (Exception e) {
             throw new WebApplicationException();
         }
@@ -70,9 +69,9 @@ public class StudentRest {
 
     @GET
     @Path("{id}")
-    public Response getStudentById(@PathParam("id") Long id) throws IdNotFoundException {
+    public Response getTeacherById(@PathParam("id") Long id) throws IdNotFoundException {
         try {
-            return Response.ok(service.getStudentById(id)).build();
+            return Response.ok(service.getTeacherById(id)).build();
         } catch (IdNotFoundException idNotFoundException) {
             throw idNotFoundException;
         } catch (Exception e) {
@@ -82,32 +81,22 @@ public class StudentRest {
 
     @DELETE
     @Path("{id}")
-    public Response deleteStudent(@PathParam("id") Long id) throws IdNotFoundException {
+    public Response deleteTeacherById(@PathParam("id") Long id) throws IdNotFoundException {
         try {
-            service.deleteStudent(id);
+            service.deleteTeacher(id);
             return Response.ok().build();
         } catch (IdNotFoundException idNotFoundException) {
             throw idNotFoundException;
-        } catch (Exception e) {
-            throw new WebApplicationException();
-        }
-    }
-
-    @GET
-    @Path("lastname")
-    public Response getStudentsByLastName(@QueryParam("lastname") String lastName) {
-        try {
-            return Response.ok(service.getStudentsByLastName(lastName)).build();
         } catch (Exception e) {
             throw new WebApplicationException();
         }
     }
 
     @POST
-    @Path("add_subject/{studentId}/{subjectId}")
-    public Response addSubject(@PathParam("studentId") Long studentId, @PathParam("subjectId") Long subjectId) throws IdNotFoundException {
+    @Path("add_subject/{teacherId}/{subjectId}")
+    public Response addSubject(@PathParam("teacherId") Long teacherId, @PathParam("subjectId") Long subjectId) throws IdNotFoundException {
         try {
-            service.addSubject(studentId, subjectId);
+            service.addSubject(teacherId, subjectId);
             return Response.ok().build();
         } catch (IdNotFoundException idNotFoundException) {
             throw idNotFoundException;
@@ -117,10 +106,10 @@ public class StudentRest {
     }
 
     @DELETE
-    @Path("remove_subject/{studentId}/{subjectId}")
-    public Response removeSubject(@PathParam("studentId") Long studentId, @PathParam("subjectId") Long subjectId) throws IdNotFoundException {
+    @Path("remove_subject/{subjectId}")
+    public Response removeSubject(@PathParam("subjectId") Long subjectId) throws IdNotFoundException {
         try {
-            service.removeSubject(studentId, subjectId);
+            service.removeSubject(subjectId);
             return Response.ok().build();
         } catch (IdNotFoundException idNotFoundException) {
             throw idNotFoundException;
