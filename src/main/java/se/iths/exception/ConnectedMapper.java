@@ -6,10 +6,10 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class IdNotFoundMapper implements ExceptionMapper<IdNotFoundException> {
+public class ConnectedMapper implements ExceptionMapper<ConnectedException> {
 
     @Override
-    public Response toResponse(IdNotFoundException e) {
+    public Response toResponse(ConnectedException e) {
         return Response
                 .status(Response.Status.BAD_REQUEST)
                 .entity(ExceptionDTO.of(e))
@@ -17,4 +17,3 @@ public class IdNotFoundMapper implements ExceptionMapper<IdNotFoundException> {
                 .build();
     }
 }
-

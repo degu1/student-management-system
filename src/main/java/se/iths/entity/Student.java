@@ -2,13 +2,12 @@ package se.iths.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @NamedQuery(name = "student.getAllByLastName", query = "SELECT s FROM Student s where s.lastName = :lastName")
-public class Student implements Serializable {
+public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -92,14 +91,12 @@ public class Student implements Serializable {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-/*
-    public List<Subject> getSubjects() {
-        return subjects;
-    }
-
- */
 
     public void setSubjects(List<Subject> subjects) {
         this.subjects = subjects;
+    }
+
+    public List<Subject> subjects() {
+        return this.subjects;
     }
 }
