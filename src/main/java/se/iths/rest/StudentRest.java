@@ -1,131 +1,50 @@
 package se.iths.rest;
 
 import se.iths.entity.Student;
+import se.iths.exception.ConnectedException;
 import se.iths.exception.IdNotFoundException;
+import se.iths.exception.NoConnectionWithEntityException;
 import se.iths.service.StudentService;
 
-import javax.ejb.Remove;
 import javax.inject.Inject;
-import javax.transaction.TransactionalException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
+
+import static se.iths.rest.ExceptionWrapperImpl.execute;
 
 @Path("students")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class StudentRest {
+public class StudentRest extends CRUDRest<Student, StudentService> {
 
     @Inject
-    StudentService service;
-
-    @POST()
-    public Response createStudent(Student student) throws TransactionalException {
-        try {
-            service.createStudent(student);
-            return Response.ok(student).build();
-        } catch (TransactionalException transactionalException) {
-            throw transactionalException;
-        } catch (Exception e) {
-            throw new WebApplicationException();
-        }
-    }
-
-    @PUT
-    public Response updateStudent(Student student) {
-        try {
-            service.updateStudent(student);
-            return Response.ok().build();
-        } catch (TransactionalException transactionalException) {
-            throw transactionalException;
-        } catch (Exception e) {
-            throw new WebApplicationException();
-        }
-    }
-
-    @PATCH
-    public Response patchStudent(Student student) throws IdNotFoundException {
-        try {
-            service.patchStudent(student);
-            return Response.ok().build();
-        } catch (TransactionalException transactionalException) {
-            throw transactionalException;
-        } catch (IdNotFoundException idNotFoundException) {
-            throw idNotFoundException;
-        } catch (Exception e) {
-            throw new WebApplicationException();
-        }
-    }
-
-    @GET()
-    public Response getAllStudents() {
-        try {
-            List<Student> students = service.getAllStudents();
-            return Response.ok(students).build();
-        } catch (Exception e) {
-            throw new WebApplicationException();
-        }
-    }
-
-    @GET
-    @Path("{id}")
-    public Response getStudentById(@PathParam("id") Long id) throws IdNotFoundException {
-        try {
-            return Response.ok(service.getStudentById(id)).build();
-        } catch (IdNotFoundException idNotFoundException) {
-            throw idNotFoundException;
-        } catch (Exception e) {
-            throw new WebApplicationException();
-        }
-    }
-
-    @DELETE
-    @Path("{id}")
-    public Response deleteStudent(@PathParam("id") Long id) throws IdNotFoundException {
-        try {
-            service.deleteStudent(id);
-            return Response.ok().build();
-        } catch (IdNotFoundException idNotFoundException) {
-            throw idNotFoundException;
-        } catch (Exception e) {
-            throw new WebApplicationException();
-        }
+    public StudentRest(StudentService service) {
+        super.service = service;
     }
 
     @GET
     @Path("lastname")
-    public Response getStudentsByLastName(@QueryParam("lastname") String lastName) {
-        try {
-            return Response.ok(service.getStudentsByLastName(lastName)).build();
-        } catch (Exception e) {
-            throw new WebApplicationException();
-        }
+    public Response getStudentsByLastName(@QueryParam("lastname") String lastName) throws ConnectedException, NoConnectionWithEntityException, IdNotFoundException {
+        return execute(() -> Response.ok(service.getStudentsByLastName(lastName)).build());
     }
 
     @POST
     @Path("add_subject/{studentId}/{subjectId}")
-    public Response addSubject(@PathParam("studentId") Long studentId, @PathParam("subjectId") Long subjectId) throws IdNotFoundException {
-        try {
+    public Response addSubject(@PathParam("studentId") Long studentId, @PathParam("subjectId") Long subjectId) throws IdNotFoundException, ConnectedException, NoConnectionWithEntityException {
+        return execute(() -> {
             service.addSubject(studentId, subjectId);
             return Response.ok().build();
-        } catch (IdNotFoundException idNotFoundException) {
-            throw idNotFoundException;
-        } catch (Exception e) {
-            throw new WebApplicationException();
-        }
+        });
     }
 
     @DELETE
     @Path("remove_subject/{studentId}/{subjectId}")
-    public Response removeSubject(@PathParam("studentId") Long studentId, @PathParam("subjectId") Long subjectId) throws IdNotFoundException {
-        try {
-            service.removeSubject(studentId, subjectId);
-            return Response.ok().build();
-        } catch (IdNotFoundException idNotFoundException) {
-            throw idNotFoundException;
-        } catch (Exception e) {
-            throw new WebApplicationException();
-        }
+    public Response removeSubject(@PathParam("studentId") Long studentId, @PathParam("subjectId") Long subjectId) throws IdNotFoundException, NoConnectionWithEntityException, ConnectedException {
+        return execute(() -> {
+                    service.removeSubject(studentId, subjectId);
+                    return Response.ok().build();
+                }
+        );
     }
 }

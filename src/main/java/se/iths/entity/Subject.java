@@ -2,11 +2,10 @@ package se.iths.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
-public class Subject implements Serializable {
+public class Subject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -51,7 +50,6 @@ public class Subject implements Serializable {
     public void setStudents(List<Student> students) {
         this.students = students;
     }
-
 
     public Teacher getTeacher() {
         return teacher;
